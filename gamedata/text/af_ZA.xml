@@ -1,8 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
+ <?xml version="1.0" encoding="UTF-8"?>
 
 <language>
+ 
+ <text alias="yep">
+    <properties>
+      <string>ja</string>
+    </properties>
+  </text>
 
-  <text alias="new-game">
+  <text alias="nope">
+    <properties>
+      <string>nee</string>
+    </properties>
+  </text>
+ 
+ <text alias="new-game">
     <properties>
       <string>Nuwe speletjie</string>
     </properties>
@@ -46,7 +58,7 @@
 
   <text alias="load-game">
     <properties>
-      <string>Laai speletjie</string>
+      <string>Gestoorde speletjie</string>
     </properties>
   </text>
 
@@ -82,7 +94,7 @@
 
   <text alias="take">
     <properties>
-      <string>Dra</string>
+      <string>Dra of Los</string>
     </properties>
   </text>
 
@@ -115,22 +127,82 @@
       <string>Pouse</string>
     </properties>
   </text>
-
-  <text alias="confirm-quit">
-    <properties font="big" color="cyan">
-      <string>Druk Escape om speletjie</string>
-    </properties>
-    <properties font="big" color="cyan">
-      <string>klaar te maak</string>
+  
+   <text alias="automap">
+    <properties>
+      <string>Gaan Terug</string>
     </properties>
   </text>
 
-  <text alias="confirm-resume">
-    <properties font="big" color="yellow">
-      <string>Druk enige ander sleutel om</string>
+  <text alias="confirm-quit">
+    <properties font="big" color="cyan">
+      <string>Gebruik Escape-sleutel om die spel te verlaat</string>
     </properties>
+  </text>
+  
+    <text alias="confirm-resume">
     <properties font="big" color="yellow">
-      <string>weer te begin</string>
+      <string>of 'n ander sleutel om te hervat</string>
+    </properties>
+  </text>
+
+   <text alias="video-menu">
+    <properties>
+      <string>Video</string>
+    </properties>
+  </text>
+
+  <text alias="screen-size">
+    <properties>
+      <string>Grootte van die Skerm</string>
+    </properties>
+  </text>
+
+  <text alias="full-screen">
+    <properties>
+      <string>Volskerm</string>
+    </properties>
+  </text>
+
+  <text alias="draw-shadows">
+    <properties>
+      <string>Wys Skaduwees</string>
+    </properties>
+  </text>
+
+  <text alias="draw-decor">
+    <properties>
+      <string>Wys landskap dekor</string>
+    </properties>
+  </text>
+
+  <text alias="draw-miniatures">
+    <properties>
+      <string>Wys Kamer Uitleg</string>
+    </properties>
+  </text>
+
+  <text alias="center-camera-on">
+    <properties>
+      <string>Wys Kamera Op</string>
+    </properties>
+  </text>
+
+  <text alias="room">
+    <properties>
+      <string>kamer</string>
+    </properties>
+  </text>
+
+  <text alias="character">
+    <properties>
+      <string>karakter</string>
+    </properties>
+  </text>
+
+  <text alias="graphic-set">
+    <properties>
+      <string>Kies Stel Grafika</string>
     </properties>
   </text>
 
@@ -142,13 +214,19 @@
 
   <text alias="soundfx">
     <properties>
-      <string>Klank effekte</string>
+      <string>Volume van effekte</string>
     </properties>
   </text>
 
   <text alias="music">
     <properties>
       <string>Musiek</string>
+    </properties>
+  </text>
+
+<text alias="play-room-melodies">
+  <properties>
+      <string>Speel kamer deuntjies</string>
     </properties>
   </text>
 
@@ -160,7 +238,7 @@
 
   <text alias="exit-game">
     <properties>
-      <string>Klaar</string>
+      <string>Gaan uit</string>
     </properties>
   </text>
 
@@ -168,8 +246,11 @@
     <properties font="big" color="orange">
       <string>Reinkanasie Vis gee jou kans om</string>
     </properties>
-    <properties font="big" color="orange">
-      <string>jou speletjie met SPACE te stoor</string>
+	 <properties font="big" color="cycling">
+      <string>jou speletjie te stoor</string>
+    </properties>
+	    <properties font="big" color="orange">
+      <string>met die druk van SPACE sleutelte</string>
     </properties>
   </text>
 
@@ -209,9 +290,26 @@
     </properties>
   </text>
 
+<text alias="final-text">
+    <properties font="big" color="multicolor">
+      <string>Die mense loof jou !</string>
+      <string></string>
+    </properties>
+    <properties font="plain" color="white">
+      <string>Hierdie kant toe, my liewe vriend,</string>
+      <string>ons twee helde het 'n einde gemaak</string>
+    </properties>
+    <properties font="plain" color="cyan">
+      <string>van die Blacktooth-keiser tirannie</string>
+    </properties>
+    <properties font="plain" color="yellow">
+      <string>eens en vir altyd</string>
+    </properties>
+  </text>
+
   <text alias="dummy">
     <properties>
-      <string>Skyn</string>
+      <string>Beginner</string>
     </properties>
   </text>
 
