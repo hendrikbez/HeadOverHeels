@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<language name="Afrikaans" iso="af_ZA">
+
+     <text alias="yep">
+        <string>ja</string>
+     </text>
+     <text alias="nope">
+        <string>nee</string>
+     </text>
+     <text alias="new-game">
+        <string>Nuwe speletjie</string>
+     </text>
+     <text alias="blacktooth-empire">
+        <string>Die Blacktooth Ryk</string>
+     </text>
+     <text alias="blacktooth">
+        <string>Blacktooth</string>
+     </text>
+     <text alias="egyptus">
+        <string>Egyptus</string>
+     </text>
+     <text alias="penitentiary">
+        <string>Penitentiary</string>
+     </text>
+     <text alias="byblos">
+        <string>Byblos</string>
+     </text>
+     <text alias="safari">
+        <string>Safari</string>
+     </text>
+     <text alias="load-old-game">
+        <string>Laai ou speletjie</string>
+     </text>
+     <text alias="free-slot">
+        <string>vry</string>
+     </text>
+     <text alias="options-menu">
+        <string>Opsies</string>
+     </text>
+     <text alias="keys-menu">
+        <string>Sleutelbord</string>
+     </text>
+     <text alias="movenorth">
+        <string>Links</string>
+     </text>
+     <text alias="movesouth">
+        <string>Regs</string>
+     </text>
+     <text alias="moveeast">
+        <string>Op</string>
+     </text>
+     <text alias="movewest">
+        <string>Af</string>
+     </text>
+     <text alias="take">
+        <string>Dra</string>
+     </text>
+     <text alias="jump">
+        <string>Spring</string>
+     </text>
+     <text alias="doughnut">
+        <string>Vuur</string>
+     </text>
+     <text alias="takeandjump">
+        <string>Dra+Spring</string>
+     </text>
+     <text alias="swap">
+        <string>Ruil</string>
+     </text>
+     <text alias="pause">
+        <string>Pouse</string>
+     </text>
+     <text alias="automap">
+        <string>Wys Kaart</string>
+     </text>
+     <text alias="video-menu">
+        <string>Verander grafika</string>
+     </text>
+     <text alias="screen-size">
+        <string>Skerm groote </string>
+     </text>
+     <text alias="full-screen">
+        <string>Volle skerm</string>
+     </text>
+     <text alias="draw-shadows">
+        <string>Wys skaduwees</string>
+     </text>
+     <text alias="draw-decor">
+        <string>Wys dekor</string>
+     </text>
+     <text alias="show-miniatures">
+        <string>Wys miniatuur van kamers</string>
+     </text>
+     <text alias="center-camera-on">
+        <string>Sentreer die kamera op</string>
+     </text>
+     <text alias="room">
+        <string>Kamer</string>
+     </text>
+     <text alias="character">
+        <string>Karakter</string>
+     </text>
+     <text alias="graphic-set">
+        <string>Kies die stel grafika</string>
+     </text>
+     <text alias="audio-menu">
+        <string>Audio</string>
+     </text>
+     <text alias="soundfx">
+        <string>Klank effekte</string>
+     </text>
+     <text alias="music">
+        <string>Musiek</string>
+     </text>
+     <text alias="play-room-melodies">
+        <string>Speel kamerdeuntjie</string>
+     </text>
+     <text alias="language-menu">
+        <string>Kies taal</string>
+     </text>
+     <text alias="show-credits">
+        <string>Krediete</string>
+     </text>
+     <text alias="exit-game">
+        <string>Verlaat</string>
+     </text>
+     <text alias="confirm-quit">
+        <string font="big" color="cyan">Druk M en dan Escape om </string>
+        <string font="big" color="cyan">speletjie te Verlaat</string>
+     </text>
+     <text alias="confirm-resume">
+        <string font="big" color="yellow">Druk enige ander sleutel om</string>
+        <string font="big" color="yellow">weer te begin</string>
+     </text>
+     <text alias="save-game">
+        <string font="big" color="orange">Reinkanasie Vis gee jou kans om</string>
+        <string font="big" color="orange">jou speletjie met SPACE te stoor</string>
+     </text>
+     <text alias="score">
+        <string>Telling</string>
+     </text>
+     <text alias="explored-rooms">
+        <string>%d Kamers verken</string>
+     </text>
+     <text alias="liberated-planets">
+        <string>Skommel %d planete</string>
+     </text>
+     <text alias="rooms">
+        <string>kamers</string>
+     </text>
+     <text alias="planets">
+        <string>planete</string>
+     </text>
+     <text alias="dummy">
+        <string>Dummy</string>
+     </text>
+     <text alias="novice">
+        <string>Nuweling</string>
+     </text>
+     <text alias="spy">
+        <string>Spioen</string>
+     </text>
+     <text alias="master-spy">
+        <string>Baasspioen</string>
+     </text>
+     <text alias="hero">
+        <string>Held</string>
+     </text>
+     <text alias="liberator">
+        <string>Bevryder</string>
+     </text>
+     <text alias="final-text">
+        <string font="big" color="multicolor">Die mense loof jou !</string>
+        <string>_*en*_ </string>
+        <string color="white"> Hierdie kant toe, my liewe vriend,</string>
+        <string color="cyan"> ons twee helde het 'n einde gemaak aan die</string>
+        <string color="orange"> Blacktooth Ryk se tirannie,</string>
+        <string color="yellow"> eens en vir altyd.</string>
+     </text>
+
+</language>
