@@ -16,6 +16,22 @@
 
 class FreeItem ;
 
+namespace activities
+{
+
+class ActivityOfElevator : public Activity
+{
+
+public: /* constants */
+
+        static const unsigned int GoingDown             = 200 ;
+        static const unsigned int ReachedBottom         = 202 ;
+        static const unsigned int GoingUp               = 210 ;
+        static const unsigned int ReachedTop            = 211 ;
+
+} ;
+
+}
 
 namespace behaviors
 {
@@ -33,7 +49,7 @@ public:
 
         virtual ~Elevator( ) {}
 
-        virtual bool update_returningdisappearance () ;
+        virtual bool update () ;
 
         int getTop () const {  return top ;  }
 

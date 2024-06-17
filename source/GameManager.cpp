@@ -17,6 +17,7 @@
 #include "SoundManager.hpp"
 #include "LanguageStrings.hpp"
 #include "Color.hpp"
+#include "PoolOfPictures.hpp"
 
 #include "util.hpp"
 #include "ospaths.hpp"
@@ -71,7 +72,7 @@ void GameManager::cleanUp ()
         isomot.binView ();
         GameMap::getInstance().clear ();
 
-        Item::getPoolOfPictures().clear ();
+        PoolOfPictures::getPoolOfPictures().clear ();
 
         delete freedomLabel ;
 }
@@ -203,7 +204,7 @@ void GameManager::pause ()
         else if ( keyMoments.wasFishEaten( true ) )
         {
                 gui::LanguageStrings* languageStrings = gui::GuiManager::getInstance().getLanguageStrings() ;
-                gui::LanguageText* text = languageStrings->getTranslatedStringByAlias( "save-game" );
+                gui::LanguageText* text = languageStrings->getTranslatedTextByAlias( "save-game" );
                 int textAtY = ( GamePreferences::getScreenHeight() >> 2 ) - 60 ;
 
                 gui::TextField ateFishText( GamePreferences::getScreenWidth(), "center" );
@@ -212,10 +213,10 @@ void GameManager::pause ()
                 for ( unsigned int i = 0; i < text->howManyLinesOfText (); i ++ )
                 {
                         const gui::LanguageLine & line = text->getNthLine( i );
-                        ateFishText.appendText( line.getText(), line.isBigHeight(), line.getColor() );
+                        ateFishText.appendText( line.getString(), line.isBigHeight(), line.getColor() );
                 }
 
-                text = languageStrings->getTranslatedStringByAlias( "confirm-resume" );
+                text = languageStrings->getTranslatedTextByAlias( "confirm-resume" );
                 textAtY += ateFishText.getHeightOfField () + 20 ;
 
                 gui::TextField resumeText( GamePreferences::getScreenWidth(), "center" );
@@ -224,7 +225,7 @@ void GameManager::pause ()
                 for ( unsigned int i = 0; i < text->howManyLinesOfText (); i ++ )
                 {
                         const gui::LanguageLine & line = text->getNthLine( i );
-                        resumeText.appendText( line.getText(), line.isBigHeight(), line.getColor() );
+                        resumeText.appendText( line.getString(), line.isBigHeight(), line.getColor() );
                 }
 
                 allegro::emptyKeyboardBuffer();
@@ -291,7 +292,7 @@ void GameManager::pause ()
                 SoundManager::getInstance().stopEverySound ();
 
                 gui::LanguageStrings* languageStrings = gui::GuiManager::getInstance().getLanguageStrings();
-                gui::LanguageText* text = languageStrings->getTranslatedStringByAlias( "confirm-quit" );
+                gui::LanguageText* text = languageStrings->getTranslatedTextByAlias( "confirm-quit" );
                 int textAtY = ( GamePreferences::getScreenHeight() >> 2 );
 
                 gui::TextField quitText( GamePreferences::getScreenWidth(), "center" );
@@ -300,10 +301,10 @@ void GameManager::pause ()
                 for ( unsigned int i = 0; i < text->howManyLinesOfText (); i ++ )
                 {
                         const gui::LanguageLine & line = text->getNthLine( i );
-                        quitText.appendText( line.getText(), line.isBigHeight(), line.getColor() );
+                        quitText.appendText( line.getString(), line.isBigHeight(), line.getColor() );
                 }
 
-                text = languageStrings->getTranslatedStringByAlias( "confirm-resume" );
+                text = languageStrings->getTranslatedTextByAlias( "confirm-resume" );
                 textAtY += quitText.getHeightOfField () + 20 ;
 
                 gui::TextField resumeText( GamePreferences::getScreenWidth(), "center" );
@@ -312,7 +313,7 @@ void GameManager::pause ()
                 for ( unsigned int i = 0; i < text->howManyLinesOfText (); i ++ )
                 {
                         const gui::LanguageLine & line = text->getNthLine( i );
-                        resumeText.appendText( line.getText(), line.isBigHeight(), line.getColor() );
+                        resumeText.appendText( line.getString(), line.isBigHeight(), line.getColor() );
                 }
 
                 bool quit = false ;

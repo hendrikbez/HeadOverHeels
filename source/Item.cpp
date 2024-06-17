@@ -7,6 +7,7 @@
 #include "Behavior.hpp"
 #include "CreatorOfBehaviors.hpp"
 #include "GameManager.hpp"
+#include "PoolOfPictures.hpp"
 #include "Way.hpp"
 
 #include <util.hpp>
@@ -14,9 +15,6 @@
 #include <algorithm> // std::for_each
 
 #include <iostream>
-
-
-PoolOfPictures * Item::poolOfPictures = new PoolOfPictures( ) ;
 
 
 Item::Item( const DescriptionOfItem & description, int z, const std::string & where )
@@ -86,7 +84,7 @@ Item::~Item( )
 
 bool Item::updateItem ()
 {
-        return ( this->behavior != nilPointer ) ? ( ! this->behavior->update_returningdisappearance () ) : true ;
+        return ( this->behavior != nilPointer ) ? this->behavior->update() : true ;
 }
 
 /* private */
@@ -263,7 +261,7 @@ bool Item::canAdvanceTo( int x, int y, int z )
         return ! collisionFound ;
 }
 
-bool Item::crossesWith( const Item & item ) const
+bool Item::overlapsWith( const Item & item ) const
 {
         return  ( this->getX() < item.getX() + item.getWidthX() ) &&
                         ( item.getX() < this->getX() + this->getWidthX() ) &&
@@ -366,8 +364,9 @@ void Item::createFrames ()
 
         assert( ! getDescriptionOfItem().getNameOfPicturesFile().empty() );
 
-        PicturePtr picture = getPoolOfPictures().getOrLoadAndGetOrMakeAndGet( getDescriptionOfItem().getNameOfPicturesFile(),
-                                                        getDescriptionOfItem().getWidthOfFrame(), getDescriptionOfItem().getHeightOfFrame() );
+        PicturePtr picture = PoolOfPictures::getPoolOfPictures().getOrLoadAndGetOrMakeAndGet(
+                                        getDescriptionOfItem().getNameOfPicturesFile(),
+                                                getDescriptionOfItem().getWidthOfFrame(), getDescriptionOfItem().getHeightOfFrame() );
 
         // decompose image into frames
         // they are
@@ -433,8 +432,9 @@ void Item::createShadowFrames ()
 
         assert( ! getDescriptionOfItem().getNameOfShadowsFile().empty() );
 
-        PicturePtr picture = getPoolOfPictures().getOrLoadAndGetOrMakeAndGet( getDescriptionOfItem().getNameOfShadowsFile(),
-                                                        getDescriptionOfItem().getWidthOfShadow(), getDescriptionOfItem().getHeightOfShadow() );
+        PicturePtr picture = PoolOfPictures::getPoolOfPictures().getOrLoadAndGetOrMakeAndGet(
+                                        getDescriptionOfItem().getNameOfShadowsFile(),
+                                                getDescriptionOfItem().getWidthOfShadow(), getDescriptionOfItem().getHeightOfShadow() );
 
         // decompose image into frames
 

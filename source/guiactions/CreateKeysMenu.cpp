@@ -38,7 +38,7 @@ void CreateKeysMenu::act ()
                         const std::string & theAction = userActions[ i ];
                         std::string xmlAction = ( theAction == "take&jump" ) ? "takeandjump" : theAction ;
 
-                        Label* label = new Label( languageStrings->getTranslatedStringByAlias( xmlAction )->getText() );
+                        Label* label = new Label( languageStrings->getTranslatedTextByAlias( xmlAction )->getText() );
 
                         std::string theKey = InputManager::getInstance().getUserKeyFor( theAction );
                         if ( theKey == "none" ) label->changeColor( "cyan" );
@@ -46,7 +46,7 @@ void CreateKeysMenu::act ()
                         label->setAction( new RedefineKey( menuOfKeys, theAction ) );
 
                         menuOfKeys->addOption( label );
-                        menuOfKeys->setValueOf( label, theKey );
+                        menuOfKeys->setValueOf( label, CreateKeysMenu::allegroKeyToMenuKey( theKey ) );
                 }
 
                 screen.addWidget( menuOfKeys );

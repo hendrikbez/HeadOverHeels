@@ -22,7 +22,7 @@ namespace gui {
 
 CreateLanguageMenu::CreateLanguageMenu( ) : Action( )
 {
-        makeListOfLanguages( ospaths::sharePath() + "text" );
+        CreateLanguageMenu::makeMapOfLanguages( ospaths::sharePath() + "text", this->languages );
 }
 
 CreateLanguageMenu::~CreateLanguageMenu( )
@@ -76,7 +76,7 @@ void CreateLanguageMenu::act ()
                 menu->addOption( tongue );
 
                 if ( chosenLanguage == ( *it ).first || ( chosenLanguage.empty() && it == languages.begin() ) )
-                        menu->setActiveOption( ( *it ).second );
+                        menu->setActiveOptionByText( ( *it ).second );
         }
 
         screen.addWidget( menu );
@@ -85,8 +85,8 @@ void CreateLanguageMenu::act ()
         GuiManager::getInstance().changeScreen( screen, true );
 }
 
-/* private */
-void CreateLanguageMenu::makeListOfLanguages( const std::string & languagesFolder )
+/* public static */
+void CreateLanguageMenu::makeMapOfLanguages( const std::string & languagesFolder, std::map < std::string, std::string > & languages )
 {
         DIR * dir = opendir( languagesFolder.c_str () );
 
@@ -105,13 +105,13 @@ void CreateLanguageMenu::makeListOfLanguages( const std::string & languagesFolde
                         const char * linguonym = language->Attribute( "name" );
                         const char * iso = language->Attribute( "iso" );
                         if ( linguonym != nilPointer && iso != nilPointer )
-                                this->languages[ iso ] = linguonym ;
+                                languages[ iso ] = linguonym ;
                         else {
                                 std::string nameWithoutXmlSuffix = nameOfEntry.substr( 0, nameOfEntry.size() - 4 );
                                 if ( linguonym != nilPointer )
-                                        this->languages[ nameWithoutXmlSuffix ] = linguonym ;
+                                        languages[ nameWithoutXmlSuffix ] = linguonym ;
                                 else
-                                        this->languages[ nameWithoutXmlSuffix ] = nameWithoutXmlSuffix ;
+                                        languages[ nameWithoutXmlSuffix ] = nameWithoutXmlSuffix ;
                         }
                 }
         }
