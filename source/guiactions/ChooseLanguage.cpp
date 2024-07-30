@@ -5,25 +5,13 @@
 #include "GuiManager.hpp"
 
 
-namespace gui
+void gui::ChooseLanguage::act ()
 {
-
-ChooseLanguage::ChooseLanguage( const std::string & laLangueChoisie )
-        : Action( )
-        , language( laLangueChoisie )
-{
-
-}
-
-void ChooseLanguage::act ()
-{
-        if ( GuiManager::getInstance().countScreens() > 1 ) // not the very first screen
-                GuiManager::getInstance().freeScreens() ;
+        if ( GuiManager::getInstance().countSlides() > 1 ) // not the very first slide
+                GuiManager::getInstance().freeSlides() ;
 
         GuiManager::getInstance().setLanguage( language );
 
         CreateMainMenu * mainMenu = new CreateMainMenu();
         mainMenu->doIt ();
-}
-
 }

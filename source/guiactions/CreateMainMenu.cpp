@@ -8,25 +8,22 @@
 #include "Menu.hpp"
 #include "Screen.hpp"
 
-#include "CreatePlanetsScreen.hpp"
+#include "ShowSlideWithPlanets.hpp"
 #include "CreateListOfSavedGames.hpp"
 #include "CreateOptionsMenu.hpp"
 #include "ShowAuthors.hpp"
-#include "ExitApplication.hpp"
+#include "Quit.hpp"
 
 
-namespace gui
-{
-
-void CreateMainMenu::act ()
+void gui::CreateMainMenu::act ()
 {
         SoundManager::getInstance().playOgg( "music/MainTheme.ogg", /* loop */ true );
 
-        Screen & screen = * GuiManager::getInstance().findOrCreateScreenForAction( *this );
+        Screen & mainMenuSlide = * GuiManager::getInstance().findOrCreateSlideForAction( getNameOfAction() );
 
-        if ( screen.isNewAndEmpty() )
+        if ( mainMenuSlide.isNewAndEmpty() )
         {
-                screen.placeHeadAndHeels( /* icons */ true, /* copyrights */ true );
+                mainMenuSlide.placeHeadAndHeels( /* icons */ true, /* copyrights */ true );
 
                 LanguageStrings* languageStrings = GuiManager::getInstance().getLanguageStrings() ;
 
@@ -36,11 +33,11 @@ void CreateMainMenu::act ()
                 Label* showCredits = new Label( languageStrings->getTranslatedTextByAlias( "show-credits" )->getText() );
                 Label* quitGame = new Label( languageStrings->getTranslatedTextByAlias( "exit-game" )->getText() );
 
-                newGame->setAction( new CreatePlanetsScreen( false ) );
+                newGame->setAction( new ShowSlideWithPlanets( false ) );
                 loadGame->setAction( new CreateListOfSavedGames( true ) );
                 optionsMenu->setAction( new CreateOptionsMenu() );
                 showCredits->setAction( new ShowAuthors() );
-                quitGame->setAction( new ExitApplication() );
+                quitGame->setAction( new Quit() );
 
                 Menu * menu = new Menu( );
                 menu->setVerticalOffset( 12 );
@@ -51,11 +48,9 @@ void CreateMainMenu::act ()
                 menu->addOption( showCredits );
                 menu->addOption( quitGame );
 
-                screen.addWidget( menu );
-                screen.setNextKeyHandler( menu );
+                mainMenuSlide.addWidget( menu );
+                mainMenuSlide.setKeyHandler( menu );
         }
 
-        GuiManager::getInstance().changeScreen( screen, false );
-}
-
+        GuiManager::getInstance().changeSlide( getNameOfAction(), false );
 }

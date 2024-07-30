@@ -25,14 +25,14 @@ namespace gui
 
 void CreateListOfSavedGames::act ()
 {
-        Screen & screen = * GuiManager::getInstance().findOrCreateScreenForAction( *this );
+        Screen & savedGamesSlide = * GuiManager::getInstance().findOrCreateSlideForAction( getNameOfAction() );
 
-        if ( ! screen.isNewAndEmpty () ) screen.freeWidgets() ;
+        if ( ! savedGamesSlide.isNewAndEmpty () ) savedGamesSlide.freeWidgets() ;
 
-        screen.setEscapeAction( isLoadMenu() ? static_cast< Action * >( /* to the main menu */ new CreateMainMenu() )
-                                             : static_cast< Action * >( /* back to the game */ new ContinueGame( true ) ) );
+        savedGamesSlide.setEscapeAction( isLoadMenu() ? static_cast< Action * >( /* to the main menu */ new CreateMainMenu() )
+                                                      : static_cast< Action * >( /* back to the game */ new ContinueGame( true ) ) );
 
-        screen.placeHeadAndHeels( /* icons */ true, /* copyrights */ false );
+        savedGamesSlide.placeHeadAndHeels( /* icons */ true, /* copyrights */ false );
 
         LanguageStrings* languageStrings = GuiManager::getInstance().getLanguageStrings() ;
 
@@ -69,11 +69,11 @@ void CreateListOfSavedGames::act ()
                         ss << languageStrings->getTranslatedTextByAlias( "free-slot" )->getText ();
                         Label* freeLine = new Label( ss.str() );
                         if ( isLoadMenu() ) {
-                                freeLine->changeColor( "cyan" );
+                                freeLine->getFontToChange().setColor( "cyan" );
                                 freeLine->setAction( new PlaySound( "mistake" ) );
                         }
                         else {
-                                freeLine->changeColor( "orange" );
+                                freeLine->getFontToChange().setColor( "orange" );
                                 freeLine->setAction( new SaveGame( slot ) );
                         }
 
@@ -81,10 +81,10 @@ void CreateListOfSavedGames::act ()
                 }
         }
 
-        screen.addWidget( menu );
-        screen.setNextKeyHandler( menu );
+        savedGamesSlide.addWidget( menu );
+        savedGamesSlide.setKeyHandler( menu );
 
-        GuiManager::getInstance().changeScreen( screen, true );
+        GuiManager::getInstance().changeSlide( getNameOfAction(), true );
 }
 
 SavedGameInfo CreateListOfSavedGames::readSomeInfoFromTheSavedGame( const std::string & fileName )

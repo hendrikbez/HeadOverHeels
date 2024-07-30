@@ -52,18 +52,16 @@ namespace gui
         Screen::backgroundPicture->setName( "the black background for user interface slides" );
 }
 
-Screen::Screen( Action & action ) :
+Screen::Screen() :
         Widget( 0, 0 ),
         imageOfScreen( new Picture( GamePreferences::getScreenWidth(), GamePreferences::getScreenHeight() ) ),
+        noTransition( false ),
         drawSpectrumColors( false ),
-        actionOfScreen( action ),
         escapeAction( nilPointer ),
-        nextKeyHandler( nilPointer ),
+        keyHandler( nilPointer ),
         pictureOfHead( nilPointer ),
         pictureOfHeels( nilPointer )
 {
-        this->imageOfScreen->setName( "image of screen for action " + getNameOfAction() );
-
         if ( Screen::backgroundPicture == nilPointer ) Screen::refreshBackground () ;
 
         refreshPicturesOfHeadAndHeels ();
@@ -111,7 +109,7 @@ void Screen::refreshPicturesOfHeadAndHeels ()
                 int xHead = this->pictureOfHead->getX ();
                 int yHead = this->pictureOfHead->getY ();
 
-                if ( this->pictureOfHead->isOnScreen() )
+                if ( this->pictureOfHead->isOnSomeSlide () )
                         removeWidget( this->pictureOfHead );
                 else
                         delete this->pictureOfHead ;
@@ -125,7 +123,7 @@ void Screen::refreshPicturesOfHeadAndHeels ()
                 int xHeels = this->pictureOfHeels->getX ();
                 int yHeels = this->pictureOfHeels->getY ();
 
-                if ( this->pictureOfHeels->isOnScreen() )
+                if ( this->pictureOfHeels->isOnSomeSlide () )
                         removeWidget( this->pictureOfHeels );
                 else
                         delete this->pictureOfHeels ;
@@ -150,16 +148,14 @@ void Screen::refresh () const
 
         imageOfScreen->fillWithColor( Color::byName( "red" ) ); // the red background is so red
 
-        // draw background, if any
+        // draw background
 
         if ( Screen::backgroundPicture == nilPointer )
-        {
                 Screen::refreshBackground ();
-        }
+
         if ( Screen::backgroundPicture == nilPointer )
-        {       // it's impossible
+                // it's impossible
                 throw MayNotBePossible( "Screen::backgroundPicture is nil after Screen::refreshBackground()" ) ;
-        }
 
         unsigned int backgroundWidth = backgroundPicture->getWidth();
         unsigned int backgroundHeight = backgroundPicture->getHeight();
@@ -250,19 +246,19 @@ void Screen::draw2x8colors ( const Screen & slide )
         }
 }
 
-void Screen::handleKey( const std::string& key )
+void Screen::handleKey( const std::string & key )
 {
-        if ( allegro::isAltKeyPushed() && allegro::isShiftKeyPushed() && allegro::isKeyPushed( "f" ) )
-        {
+        if ( allegro::isAltKeyPushed() && allegro::isShiftKeyPushed() && allegro::isKeyPushed( "f" ) ) {
                 gui::GuiManager::getInstance().toggleFullScreenVideo ();
                 return;
         }
 
-        if ( this->escapeAction != nilPointer && key == "Escape" )
+        if ( this->escapeAction != nilPointer && key == "Escape" ) {
+                allegro::releaseKey( "Escape" );
                 this->escapeAction->doIt ();
-        else
-                if ( this->nextKeyHandler != nilPointer )
-                        this->nextKeyHandler->handleKey( key );
+        } else
+          if ( this->keyHandler != nilPointer )
+                this->keyHandler->handleKey( key );
 }
 
 void Screen::addWidget( Widget* widget )
@@ -270,7 +266,7 @@ void Screen::addWidget( Widget* widget )
         if ( widget == nilPointer ) return ;
 
         this->widgets.push_back( widget );
-        widget->setOnScreen( true );
+        widget->setContainingSlide( this );
 }
 
 bool Screen::removeWidget( Widget* widget )
@@ -291,10 +287,10 @@ bool Screen::removeWidget( Widget* widget )
 
 void Screen::freeWidgets ()
 {
-        if ( pictureOfHead != nilPointer && ! pictureOfHead->isOnScreen () )
+        if ( pictureOfHead != nilPointer && ! pictureOfHead->isOnSomeSlide() )
                 delete pictureOfHead;
 
-        if ( pictureOfHeels != nilPointer && ! pictureOfHeels->isOnScreen () )
+        if ( pictureOfHeels != nilPointer && ! pictureOfHeels->isOnSomeSlide() )
                 delete pictureOfHeels;
 
         while ( ! this->widgets.empty () )
@@ -313,9 +309,9 @@ void Screen::placeHeadAndHeels( bool picturesToo, bool copyrightsToo )
         const unsigned int screenWidth = GamePreferences::getScreenWidth();
         const unsigned int space = ( screenWidth / 20 ) - 10;
 
-        Label* Head = new Label( "Head", Font::fontWith2xHeightAndColor( "yellow" ) );
-        Label* over = new Label( "over", Font::fontWithColor( "" ), /* multicolor */ true );
-        Label* Heels = new Label( "Heels", Font::fontWith2xHeightAndColor( "yellow" ) );
+        Label* Head = new Label( "Head", new Font( "yellow", true ) );
+        Label* over = new Label( "over", new Font( "white" ), /* multicolor */ true );
+        Label* Heels = new Label( "Heels", new Font( "yellow", true ) );
 
         over->moveTo( ( screenWidth - over->getWidth() - 20 ) >> 1, space + Head->getHeight() - over->getHeight() - 8 );
         addWidget( over );
@@ -350,8 +346,8 @@ void Screen::placeHeadAndHeels( bool picturesToo, bool copyrightsToo )
 
         if ( copyrightsToo )
         {
-                Label* Jorge = new Label( "{ 2009 Jorge Rodríguez Santos", Font::fontWithColor( "orange" ) );
-                Label* Douglas = new Label( "{ 2024 Douglas Mencken", Font::fontWithColor( "yellow" ) );
+                Label* Jorge = new Label( "{ 2009 Jorge Rodríguez Santos", new Font( "orange" ) );
+                Label* Douglas = new Label( "{ 2024 Douglas Mencken", new Font( "yellow" ) );
 
                 const unsigned int screenHeight = GamePreferences::getScreenHeight();
                 const int leading = 28;
@@ -399,7 +395,7 @@ void Screen::scrollHorizontally( const Screen& oldScreen, const Screen& newScree
                 {
                         allegro::bitBlit( buffer.getAllegroPict(), allegro::Pict::theScreen() );
                         allegro::update ();
-                        drawTimer->reset ();
+                        drawTimer->go() ;
                 }
 
                 somn::milliSleep( 1 );
@@ -435,7 +431,7 @@ void Screen::wipeHorizontally( const Screen& oldScreen, const Screen& newScreen,
                 {
                         allegro::bitBlit( buffer.getAllegroPict(), allegro::Pict::theScreen() );
                         allegro::update ();
-                        drawTimer->reset ();
+                        drawTimer->go() ;
                 }
 
                 somn::milliSleep( 1 );
@@ -477,7 +473,7 @@ void Screen::barWipeHorizontally( const Screen& oldScreen, const Screen& newScre
                 {
                         allegro::bitBlit( buffer.getAllegroPict(), allegro::Pict::theScreen() );
                         allegro::update ();
-                        drawTimer->reset ();
+                        drawTimer->go() ;
                 }
 
                 somn::milliSleep( 2 );
@@ -539,7 +535,7 @@ void Screen::randomPixelFade( bool fadeIn, const Screen& slide, const Color& col
                         {
                                 allegro::bitBlit( buffer.getAllegroPict(), allegro::Pict::theScreen() );
                                 allegro::update ();
-                                drawTimer->reset ();
+                                drawTimer->go() ;
                         }
 
                         bits[ x + y * screenWidth ] = true;

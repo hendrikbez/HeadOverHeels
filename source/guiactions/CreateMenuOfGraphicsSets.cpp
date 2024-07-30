@@ -37,13 +37,13 @@ void CreateMenuOfGraphicsSets::act ()
 {
         const size_t positionOfSecondColumn = 18;
 
-        Screen & screen = * GuiManager::getInstance().findOrCreateScreenForAction( *this );
+        Screen & slideOfGraphicsSets = * GuiManager::getInstance().findOrCreateSlideForAction( getNameOfAction() );
 
-        if ( screen.isNewAndEmpty() )
+        if ( slideOfGraphicsSets.isNewAndEmpty() )
         {
-                screen.setEscapeAction( this->actionOnEscape );
+                slideOfGraphicsSets.setEscapeAction( this->actionOnEscape );
 
-                screen.placeHeadAndHeels( /* icons */ true, /* copyrights */ false );
+                slideOfGraphicsSets.placeHeadAndHeels( /* icons */ true, /* copyrights */ false );
 
                 for ( std::map < std::string, std::string >::const_iterator i = setsOfGraphics.begin (); i != setsOfGraphics.end (); ++ i )
                 {
@@ -54,14 +54,14 @@ void CreateMenuOfGraphicsSets::act ()
                                 nameOfSetSpaced = nameOfSetSpaced + " ";
                         }
 
-                        Label * theLabel = new Label( nameOfSetSpaced + i->first );
-                        theLabel->changeColor( i->first == GameManager::getInstance().getChosenGraphicsSet() ? "yellow" : "cyan" );
-
-                        menuOfGraphicsSets->addOption( theLabel );
+                        menuOfGraphicsSets->addOption( new Label (
+                                nameOfSetSpaced + i->first,
+                                new Font( i->first == GameManager::getInstance().getChosenGraphicsSet() ? "yellow" : "cyan" )
+                        ) );
                 }
 
-                screen.addWidget( menuOfGraphicsSets );
-                screen.setNextKeyHandler( menuOfGraphicsSets );
+                slideOfGraphicsSets.addWidget( menuOfGraphicsSets );
+                slideOfGraphicsSets.setKeyHandler( menuOfGraphicsSets );
         }
 
         const std::vector< Label* > & sets = menuOfGraphicsSets->getEveryOption ();
@@ -71,7 +71,7 @@ void CreateMenuOfGraphicsSets::act ()
                         menuOfGraphicsSets->setNthOptionAsActive( i );
         }
 
-        gui::GuiManager::getInstance().changeScreen( screen, true );
+        gui::GuiManager::getInstance().changeSlide( getNameOfAction(), true );
 
         allegro::emptyKeyboardBuffer();
 
@@ -79,13 +79,13 @@ void CreateMenuOfGraphicsSets::act ()
         {
                 if ( allegro::areKeypushesWaiting() )
                 {
-                        // get the key pressed by the user
+                        // get the key typed by the user
                         std::string theKey = allegro::nextKey() ;
 
                         if ( theKey == "Escape" )
                         {
                                 allegro::emptyKeyboardBuffer();
-                                screen.handleKey( theKey );
+                                slideOfGraphicsSets.handleKey( theKey );
                                 break;
                         }
                         else
@@ -100,21 +100,20 @@ void CreateMenuOfGraphicsSets::act ()
                                         { // the new set is not the same as the previous one
                                                 GameManager::getInstance().setChosenGraphicsSet( chosenSet.c_str () ) ;
 
-                                                gui::GuiManager::getInstance().refreshScreens ();
+                                                gui::GuiManager::getInstance().refreshSlides ();
 
                                                 const std::vector< Label * > & everySet = menuOfGraphicsSets->getEveryOption ();
                                                 for ( unsigned int i = 0 ; i < everySet.size (); ++ i )
-                                                {
-                                                        everySet[ i ]->changeColor( "cyan" );
-                                                }
-                                                menuOfGraphicsSets->getActiveOption()->changeColor( "yellow" );
+                                                        everySet[ i ]->getFontToChange().setColor( "cyan" );
+
+                                                menuOfGraphicsSets->getActiveOption()->getFontToChange().setColor( "yellow" );
                                         }
 
                                         doneWithKey = true;
                                 }
 
                                 if ( ! doneWithKey )
-                                        screen.getNextKeyHandler()->handleKey( theKey );
+                                        slideOfGraphicsSets.getKeyHandler()->handleKey( theKey );
 
                                 allegro::emptyKeyboardBuffer();
                                 menuOfGraphicsSets->redraw ();

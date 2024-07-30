@@ -80,20 +80,20 @@ bool Volatile::update ()
                                         if ( mediator->howManyCollisions() > 1 ) {
                                                 while ( mediator->isThereAnyCollision() )
                                                 {
-                                                        ItemPtr bottomItem = mediator->findCollisionPop( );
+                                                        ItemPtr belowItem = mediator->findCollisionPop( );
 
-                                                        if ( bottomItem != nilPointer ) {
+                                                        if ( belowItem != nilPointer ) {
                                                                 // a volatile doesn’t vanish if it is leaning~
                                                                 //     on an item without behavior, or
                                                                 //     on a non-volatile item, or
                                                                 //     on another item that is vanishing
-                                                                if ( ( bottomItem->getBehavior() == nilPointer )
-                                                                        || ( bottomItem->getBehavior() != nilPointer
-                                                                                && bottomItem->getBehavior()->getNameOfBehavior () != "behavior of disappearance on jump into"
-                                                                                && bottomItem->getBehavior()->getNameOfBehavior () != "behavior of disappearance on touch"
-                                                                                && bottomItem->getBehavior()->getNameOfBehavior () != "behavior of bonus" )
-                                                                        || ( bottomItem->getBehavior() != nilPointer
-                                                                                && bottomItem->getBehavior()->getCurrentActivity() == activities::Activity::Vanishing ) )
+                                                                if ( ( belowItem->getBehavior() == nilPointer )
+                                                                        || ( belowItem->getBehavior() != nilPointer
+                                                                                && belowItem->getBehavior()->getNameOfBehavior () != "behavior of disappearance on jump into"
+                                                                                && belowItem->getBehavior()->getNameOfBehavior () != "behavior of disappearance on touch"
+                                                                                && belowItem->getBehavior()->getNameOfBehavior () != "behavior of bonus" )
+                                                                        || ( belowItem->getBehavior() != nilPointer
+                                                                                && belowItem->getBehavior()->getCurrentActivity() == activities::Activity::Vanishing ) )
                                                                 {
                                                                         gone = false ;
                                                                 }
@@ -104,7 +104,7 @@ bool Volatile::update ()
 
                                 if ( gone ) {
                                         setCurrentActivity( activities::Activity::Vanishing );
-                                        disappearanceTimer->reset();
+                                        disappearanceTimer->go() ;
                                 }
                         }
                         // if it's a puppy which disappears when Head or the composite character is in the room
@@ -114,7 +114,7 @@ bool Volatile::update ()
                                         mediator->findItemOfKind( "headoverheels" ) != nilPointer )
                                 {
                                         setCurrentActivity( activities::Activity::Vanishing );
-                                        disappearanceTimer->reset();
+                                        disappearanceTimer->go() ;
                                 }
                         }
                         // is it volatile in time
@@ -164,9 +164,7 @@ bool Volatile::update ()
                                 SoundManager::getInstance().play( volatileItem.getKind (), "vanish" );
 
                                 // morph into bubbles
-
                                 volatileItem.setIgnoreCollisions( true );
-
                                 volatileItem.changeHeightTo( 0 );
                                 volatileItem.metamorphInto( "bubbles", "vanishing volatile item" );
                                 volatileItem.setBehaviorOf( "behavior of disappearance in time" );

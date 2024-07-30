@@ -37,6 +37,8 @@ public:
 
         virtual ~PlayerControlled( ) ;
 
+        virtual bool update () ;
+
         /**
          * Updates the character’s behavior according to the player’s controls
          */
@@ -157,6 +159,9 @@ protected:
 
         // the frames of falling, one for each of north south west east
         std::map < std::string, unsigned int > fallFrames ;
+
+        // the frames of blinking, may be empty if the character doesn’t blink
+        std::map < std::string, unsigned int > blinkFrames ;
 
         // timer for the motion speed
         autouniqueptr < Timer > speedTimer ;

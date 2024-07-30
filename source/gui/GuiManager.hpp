@@ -20,7 +20,6 @@
 namespace gui
 {
 
-class Action ;
 class LanguageStrings ;
 
 
@@ -39,7 +38,7 @@ private:
         static const unsigned int LiberatePlanet = 1 ;  /* a crown is taken and one more planet was liberated this way */
         static const unsigned int SaveGame = 2 ;        /* save the current progress */
         static const unsigned int InFreedom = 3 ;       /* at least one character reached Freedom (not with all crowns) */
-        static const unsigned int TheFinalScreen = 4 ;  /* both characters reached Freedom with all the crowns */
+        static const unsigned int TheFinal = 4 ;        /* both characters reached Freedom with all the crowns */
         static const unsigned int GameOver = 5 ;        /* the user quit the game or all lives are lost */
 
 public:
@@ -51,7 +50,7 @@ public:
                 return ( whyPaused == LiberatePlanet
                                 || whyPaused == SaveGame
                                     || whyPaused == InFreedom
-                                        || whyPaused == TheFinalScreen
+                                        || whyPaused == TheFinal
                                             || whyPaused == GameOver ) ;
         }
 
@@ -60,13 +59,13 @@ public:
         void forNewlyLiberatedPlanet() {  whyPaused = LiberatePlanet ;  }
         void forSaving() {  whyPaused = SaveGame ;  }
         void forArrivingInFreedom() {  whyPaused = InFreedom ;  }
-        void forThatFinalScreen() {  whyPaused = TheFinalScreen ;  }
+        void forFinalSuccess() {  whyPaused = TheFinal ;  }
         void forGameOver() {  whyPaused = GameOver ;  }
 
         bool isPlanetLiberated() const {  return whyPaused == LiberatePlanet ;  }
         bool isTimeToSaveTheGame() const {  return whyPaused == SaveGame ;  }
-        bool isThatFinalSuccessScreen() const {  return whyPaused == TheFinalScreen ;  }
         bool isInFreedomWithoutAllTheCrowns() const {  return whyPaused == InFreedom ;  }
+        bool isFinalSuccess() const {  return whyPaused == TheFinal ;  }
         bool isGameOver() const {  return whyPaused == GameOver ;  }
 } ;
 
@@ -86,28 +85,33 @@ public:
 
         static GuiManager & getInstance () ;
 
-        void begin () ;
+        void firstMenu () ;
 
-        void changeScreen ( Screen & newScreen, bool dive /* it becomes rightToLeft for barWipeHorizontally */ ) ;
+        /**
+         * Draw the user interface and handle keys
+         */
+        void loop () ;
 
-       /*
-        * Search in the list of screens for the one associated with this action
-        * And if there’s no such screen found, create the new one
-        */
-        ScreenPtr findOrCreateScreenForAction ( Action & action ) ;
+        void changeSlide ( const std::string & newAction, bool dive /* it becomes rightToLeft for barWipeHorizontally */ ) ;
 
-        void freeScreens () ;
+        /**
+         * Find among all the slides the one that is associated with this action.
+         * And if there’s no such slide, create a new one
+         */
+        ScreenPtr findOrCreateSlideForAction ( const std::string & nameOfAction ) ;
 
-        void refreshScreens () ;
+        void freeSlides () ;
 
-        void redraw () ;
+        void refreshSlides () ;
 
-        void suspend () {  this->active = false ;  }
+        void redraw () const ;
 
-        bool isAtFullScreen () const {  return this->atFullScreen ;  }
+        void exit () {  this->looping = false ;  }
+
+        bool isInFullScreen () const {  return this->inFullScreen ;  }
 
        /**
-        * Use it to toggle video at full screen & video in window
+        * Switches between full screen video & windowed video
         */
         void toggleFullScreenVideo () ;
 
@@ -126,11 +130,11 @@ public:
 
         LanguageStrings* getLanguageStrings () const {  return this->languageStrings ;  }
 
-        const ScreenPtr & getActiveScreen () const {  return this->activeScreen ;  }
+        const ScreenPtr & getActiveSlide () const {  return this->activeSlide ;  }
 
-        void setActiveScreen ( ScreenPtr newScreen ) {  this->activeScreen = newScreen ;  }
+        void setActiveSlide ( ScreenPtr newSlide ) {  this->activeSlide = newSlide ;  }
 
-        unsigned int countScreens () const {  return this->screens.size() ;  }
+        unsigned int countSlides () const {  return this->slides.size() ;  }
 
         const WhyPaused & getWhyTheGameIsPaused () const {  return whyTheGameIsPaused ;  }
         WhyPaused & getWhyTheGameIsPausedToAlter () {  return whyTheGameIsPaused ;  }
@@ -139,17 +143,15 @@ public:
 
 private:
 
-        void dumpScreenz () const ;
-
         /**
          * Unique object of this class for the whole game
          */
         static GuiManager * instance ;
 
-        // the screen to draw by the user interface
-        ScreenPtr activeScreen ;
+        // the slide that is currently being drawn
+        ScreenPtr activeSlide ;
 
-        std::map < /* name of action */ std::string, ScreenPtr > screens ;
+        std::map < /* name of action */ std::string, ScreenPtr > slides ;
 
         // a language of the user interface in the LLL_CC format
         std::string chosenLanguage ;
@@ -157,15 +159,15 @@ private:
         LanguageStrings * languageStrings ;
 
         // when true draw the user interface and handle the keyboard
-        bool active ;
+        bool looping ;
 
         // a reason why the game is paused
         WhyPaused whyTheGameIsPaused ;
 
         /**
-         * Draw graphics at the full screen when true or in a window when false
+         * Draw graphics in full screen when true or in a window when false
          */
-        bool atFullScreen ;
+        bool inFullScreen ;
 
         void useLanguage ( const std::string & language ) ;
 

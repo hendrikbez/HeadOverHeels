@@ -1,26 +1,25 @@
 
-#include "CreatePlanetsScreen.hpp"
+#include "ShowSlideWithPlanets.hpp"
 
 #include "GameManager.hpp"
 #include "LanguageStrings.hpp"
 #include "SoundManager.hpp"
 #include "GuiManager.hpp"
+#include "GamePreferences.hpp"
 #include "Color.hpp"
 #include "Screen.hpp"
 #include "PictureWidget.hpp"
 #include "Label.hpp"
 #include "CreateMainMenu.hpp"
 #include "ContinueGame.hpp"
-#include "GamePreferences.hpp"
 
 #include "ospaths.hpp"
 
-using gui::CreatePlanetsScreen ;
-using gui::ContinueGame ;
-using gui::GuiManager ;
 
+namespace gui
+{
 
-CreatePlanetsScreen::CreatePlanetsScreen( bool notNewGame )
+ShowSlideWithPlanets::ShowSlideWithPlanets( bool notNewGame )
         : Action( )
         , gameInProgress( notNewGame )
         , blacktoothFree( false )
@@ -29,9 +28,14 @@ CreatePlanetsScreen::CreatePlanetsScreen( bool notNewGame )
         , byblosFree( false )
         , safariFree( false )
 {
+        if ( GameManager::getInstance().isFreePlanet( "blacktooth" ) ) liberateBlacktooth() ;
+        if ( GameManager::getInstance().isFreePlanet( "byblos" ) ) liberateByblos() ;
+        if ( GameManager::getInstance().isFreePlanet( "egyptus" ) ) liberateEgyptus() ;
+        if ( GameManager::getInstance().isFreePlanet( "penitentiary" ) ) liberatePenitentiary() ;
+        if ( GameManager::getInstance().isFreePlanet( "safari" ) ) liberateSafari() ;
 }
 
-void CreatePlanetsScreen::act ()
+void ShowSlideWithPlanets::act ()
 {
         SoundManager::getInstance().playOgg( "music/HeadOverHeels.ogg", /* loop */ false );
 
@@ -40,7 +44,7 @@ void CreatePlanetsScreen::act ()
         if ( GameManager::getInstance().isSimpleGraphicsSet () )
                 Screen::toBlackBackground () ; // change the background from red to black
 
-        Screen & planets = * GuiManager::getInstance().findOrCreateScreenForAction( *this );
+        Screen & planets = * GuiManager::getInstance().findOrCreateSlideForAction( getNameOfAction() );
 
         if ( ! planets.isNewAndEmpty() ) planets.freeWidgets() ;
 
@@ -51,12 +55,12 @@ void CreatePlanetsScreen::act ()
         std::string colorOfLabel = "yellow" ;
         if ( GameManager::getInstance().isSimpleGraphicsSet () ) colorOfLabel = "red" ;
         Label* empire = new Label( languageStrings->getTranslatedTextByAlias( "blacktooth-empire" )->getText(),
-                                        Font::fontWith2xHeightAndColor( colorOfLabel ) );
+                                        new Font( colorOfLabel, /* double height */ true ) );
         empire->moveTo( ( screenWidth - empire->getWidth() ) >> 1, 2 );
         empire->setAction( new ContinueGame( this->gameInProgress ) );
 
         planets.addWidget( empire );
-        planets.setNextKeyHandler( empire );
+        planets.setKeyHandler( empire );
 
         const std::string & pathToPictures = ospaths::sharePath() + GameManager::getInstance().getChosenGraphicsSet() ;
 
@@ -195,5 +199,8 @@ void CreatePlanetsScreen::act ()
                 planets.addWidget( nameOfPlanet );
         }
 
-        GuiManager::getInstance().changeScreen( planets, true );
+        planets.setTransitionOff() ; // no transition because after this slide the game begins
+        GuiManager::getInstance().changeSlide( getNameOfAction(), true );
+}
+
 }

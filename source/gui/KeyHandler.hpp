@@ -8,31 +8,26 @@
 // You may redistribute it and~or modify it under the terms of the GNU General Public License
 // either version 3 of the License or at your option any later version
 
-#ifndef CreateMainMenu_hpp_
-#define CreateMainMenu_hpp_
+#ifndef KeyHandler_hpp_
+#define KeyHandler_hpp_
 
-#include "Action.hpp"
+#include <string>
 
 
 namespace gui
 {
 
-/**
- * Show the main menu of the game
- */
-
-class CreateMainMenu : public Action
+class KeyHandler
 {
 
 public:
 
-        CreateMainMenu( ) : Action() {}
+        /**
+         * Subclasses may handle this key or pass it to some other handler
+         */
+        virtual void handleKey ( const std::string & key ) = 0 ;
 
-protected:
-
-        virtual void act () ;
-
-};
+} ;
 
 }
 

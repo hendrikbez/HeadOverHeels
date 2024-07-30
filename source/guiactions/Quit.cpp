@@ -1,5 +1,5 @@
 
-#include "ExitApplication.hpp"
+#include "Quit.hpp"
 
 #include "ospaths.hpp"
 
@@ -9,15 +9,11 @@
 #include "Color.hpp"
 
 
-namespace gui
-{
-
-void ExitApplication::bye ()
+void gui::Quit::bye ()
 {
         GamePreferences::writePreferences( ospaths::pathToFile( ospaths::homePath(), "preferences.xml" ) );
-        GuiManager::getInstance().suspend() ;
 
-        Screen::randomPixelFadeOut( * GuiManager::getInstance().getActiveScreen(), Color::blackColor() );
-}
+        GuiManager::getInstance().exit() ;
 
+        Screen::randomPixelFadeOut( * GuiManager::getInstance().getActiveSlide(), Color::blackColor() );
 }

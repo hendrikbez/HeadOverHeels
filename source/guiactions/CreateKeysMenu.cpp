@@ -17,13 +17,13 @@ namespace gui
 
 void CreateKeysMenu::act ()
 {
-        Screen & screen = * GuiManager::getInstance().findOrCreateScreenForAction( *this );
+        Screen & gameKeysSlide = * GuiManager::getInstance().findOrCreateSlideForAction( getNameOfAction() );
 
-        if ( screen.isNewAndEmpty() )
+        if ( gameKeysSlide.isNewAndEmpty() )
         {
-                screen.setEscapeAction( new CreateOptionsMenu() );
+                gameKeysSlide.setEscapeAction( new CreateOptionsMenu() );
 
-                screen.placeHeadAndHeels( /* icons */ false, /* copyrights */ false );
+                gameKeysSlide.placeHeadAndHeels( /* icons */ false, /* copyrights */ false );
 
                 this->menuOfKeys = new MenuWithValues( '.', 5 );
                 menuOfKeys->setVerticalOffset( 64 );
@@ -41,7 +41,7 @@ void CreateKeysMenu::act ()
                         Label* label = new Label( languageStrings->getTranslatedTextByAlias( xmlAction )->getText() );
 
                         std::string theKey = InputManager::getInstance().getUserKeyFor( theAction );
-                        if ( theKey == "none" ) label->changeColor( "cyan" );
+                        if ( theKey == "none" ) label->getFontToChange().setColor( "cyan" );
 
                         label->setAction( new RedefineKey( menuOfKeys, theAction ) );
 
@@ -49,13 +49,13 @@ void CreateKeysMenu::act ()
                         menuOfKeys->setValueOf( label, CreateKeysMenu::allegroKeyToMenuKey( theKey ) );
                 }
 
-                screen.addWidget( menuOfKeys );
-                screen.setNextKeyHandler( menuOfKeys );
+                gameKeysSlide.addWidget( menuOfKeys );
+                gameKeysSlide.setKeyHandler( menuOfKeys );
         }
         else    // select the first menu option
                 menuOfKeys->resetActiveOption();
 
-        GuiManager::getInstance().changeScreen( screen, true );
+        GuiManager::getInstance().changeSlide( getNameOfAction(), true );
 }
 
 }

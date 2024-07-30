@@ -39,6 +39,18 @@ PlayerControlled::~PlayerControlled( )
         highJumpVector.clear() ;
 }
 
+bool PlayerControlled::update ()
+{
+        AvatarItem & avatar = dynamic_cast< AvatarItem & >( getItem() );
+
+        if ( avatar.hasShield() ) avatar.decrementShieldOverTime () ;
+
+        // play sound for the current activity
+        SoundManager::getInstance().play( avatar.getOriginalKind(), SoundManager::activityToNameOfSound( getCurrentActivity() ) );
+
+        return true ;
+}
+
 bool PlayerControlled::isInvulnerableToLethalItems () const
 {
         return ( dynamic_cast< const ::AvatarItem & >( getItem () ) ).hasShield ()
@@ -70,7 +82,8 @@ void PlayerControlled::wait ()
 
         if ( activities::Falling::getInstance().fall( * this ) )
         {
-                speedTimer->reset() ;
+                speedTimer->go() ;
+
                 setCurrentActivity( activities::Activity::Falling );
 
                 if ( character.isHead ()
@@ -106,7 +119,7 @@ void PlayerControlled::move ()
                         }
                 }
 
-                speedTimer->reset();
+                speedTimer->go() ;
 
                 character.animate();
         }
@@ -125,7 +138,7 @@ void PlayerControlled::automove ()
                 // move it
                 activities::Moving::getInstance().move( *this, true );
 
-                speedTimer->reset();
+                speedTimer->go() ;
 
                 character.animate() ;
 
@@ -206,7 +219,7 @@ void PlayerControlled::displace ()
 
                 setCurrentActivity( activities::Activity::Waiting );
 
-                speedTimer->reset();
+                speedTimer->go() ;
         }
 }
 
@@ -248,12 +261,10 @@ void PlayerControlled::cancelDragging ()
 
         if ( ! character.isFrozen() )
         {
-                if ( speedTimer->getValue() > character.getSpeed() )
-                {
-                        // move it
+                if ( speedTimer->getValue() > character.getSpeed() ) {
                         activities::Moving::getInstance().move( *this, false );
 
-                        speedTimer->reset();
+                        speedTimer->go() ;
 
                         character.animate ();
                 }
@@ -273,7 +284,7 @@ void PlayerControlled::fall ()
                 else if ( getCurrentActivity() != activities::Activity::MetLethalItem || isInvulnerableToLethalItems() )
                         setCurrentActivity( activities::Activity::Waiting );
 
-                fallTimer->reset();
+                fallTimer->go() ;
         }
 
         if ( getCurrentActivity() != activities::Activity::Falling )
@@ -293,7 +304,7 @@ void PlayerControlled::glide ()
                         setCurrentActivity( activities::Activity::Waiting );
                 }
 
-                glideTimer->reset();
+                glideTimer->go() ;
         }
 
         if ( speedTimer->getValue() > character.getSpeed() * ( character.isHeadOverHeels() ? 2 : 1 ) )
@@ -322,7 +333,7 @@ void PlayerControlled::glide ()
                 // may turn while gliding so update the frame of falling
                 character.changeFrame( fallFrames[ character.getHeading() ] );
 
-                speedTimer->reset();
+                speedTimer->go() ;
         }
 
         // unlike falling, gliding doesn’t accelerate over time
@@ -378,7 +389,7 @@ void PlayerControlled::jump ()
 
                         if ( getCurrentActivity() == activities::Activity::Falling ) this->jumpPhase = -1 ; // end of jump
 
-                        speedTimer->reset();
+                        speedTimer->go() ;
 
                         character.animate() ;
                 }
@@ -519,7 +530,7 @@ void PlayerControlled::takeItem ()
         if ( character.hasTool( "handbag" ) )
         {
                 Mediator* mediator = character.getMediator();
-                ItemPtr takenItem ;
+                ItemPtr itemToTake ;
 
                 // look for an item below the character
                 if ( ! character.canAdvanceTo( 0, 0, -1 ) )
@@ -528,48 +539,46 @@ void PlayerControlled::takeItem ()
 
                         while ( mediator->isThereAnyCollision() )
                         {
-                                ItemPtr bottomItem = mediator->findCollisionPop( );
+                                ItemPtr belowItem = mediator->findCollisionPop( );
 
                                 // pick a free pushable item less than or equal to 3/4 of the size of one tile
-                                if ( bottomItem != nilPointer && bottomItem->getBehavior() != nilPointer
-                                        && ( bottomItem->getBehavior()->getNameOfBehavior() == "behavior of thing able to move by pushing" ||
-                                                bottomItem->getBehavior()->getNameOfBehavior() == "behavior of spring stool" )
-                                        && bottomItem->getUnsignedWidthX() <= ( mediator->getRoom()->getSizeOfOneTile() * 3 ) >> 2
-                                        && bottomItem->getUnsignedWidthY() <= ( mediator->getRoom()->getSizeOfOneTile() * 3 ) >> 2 )
+                                if ( belowItem != nilPointer && belowItem->getBehavior() != nilPointer
+                                        && ( belowItem->getBehavior()->getNameOfBehavior() == "behavior of thing able to move by pushing" ||
+                                                belowItem->getBehavior()->getNameOfBehavior() == "behavior of spring stool" )
+                                        && belowItem->getUnsignedWidthX() <= ( mediator->getRoom()->getSizeOfOneTile() * 3 ) >> 2
+                                        && belowItem->getUnsignedWidthY() <= ( mediator->getRoom()->getSizeOfOneTile() * 3 ) >> 2 )
                                 {
-                                        if ( bottomItem->getX() + bottomItem->getY() > whereIsItemToPick )
-                                        {
-                                                whereIsItemToPick = bottomItem->getX () + bottomItem->getY ();
-                                                takenItem = bottomItem ;
+                                        if ( belowItem->getX() + belowItem->getY() > whereIsItemToPick ) {
+                                                whereIsItemToPick = belowItem->getX() + belowItem->getY() ;
+                                                itemToTake = belowItem ;
                                         }
                                 }
                         }
 
                         // take that item
-                        if ( takenItem != nilPointer )
+                        if ( itemToTake != nilPointer )
                         {
-                                PicturePtr takenItemImage( new Picture( takenItem->getRawImage() ) );
+                                std::cout << "taking item \"" << itemToTake->getUniqueName() << "\"" << std::endl ;
 
-                                GameManager::getInstance().setImageOfItemInBag( takenItemImage );
+                                character.placeItemInBag( itemToTake->getKind (), itemToTake->getBehavior()->getNameOfBehavior () );
+                                GameManager::getInstance().setImageOfItemInBag (PicturePtr( new Picture( itemToTake->getRawImage() ) ));
 
-                                character.placeItemInBag( takenItem->getKind (), takenItem->getBehavior()->getNameOfBehavior () );
-
-                                takenItem->getBehavior()->setCurrentActivity( activities::Activity::Vanishing );
+                                itemToTake->getBehavior()->setCurrentActivity( activities::Activity::Vanishing );
 
                                 setCurrentActivity ( // update activity
                                         ( getCurrentActivity() == activities::Activity::TakeAndJump )
                                                 ? activities::Activity::Jumping
-                                                : activities::Activity::ItemTaken );
+                                                : activities::Activity::Falling );
 
                                 SoundManager::getInstance().play( character.getOriginalKind(), "take" );
-
-                                std::cout << "took item \"" << takenItem->getUniqueName() << "\"" << std::endl ;
                         }
                 }
         }
 
-        if ( getCurrentActivity() != activities::Activity::ItemTaken && getCurrentActivity() != activities::Activity::Jumping )
+        if ( getCurrentActivity() == activities::Activity::TakingItem || getCurrentActivity() == activities::Activity::TakeAndJump )
+                // wait if can’t take
                 setCurrentActivity( activities::Activity::Waiting );
+                // moreover, the original game plays a yucky sound for that
 }
 
 void PlayerControlled::dropItem ()
@@ -578,7 +587,7 @@ void PlayerControlled::dropItem ()
 
         if ( character.getDescriptionOfTakenItem() != nilPointer )
         {
-                std::cout << "drop item \"" << character.getDescriptionOfTakenItem()->getKind () << "\"" << std::endl ;
+                std::cout << "dropping item \"" << character.getDescriptionOfTakenItem()->getKind () << "\"" << std::endl ;
 
                 // place a dropped item just below the character
                 if ( character.addToZ( Room::LayerHeight ) )
@@ -608,6 +617,7 @@ void PlayerControlled::dropItem ()
                 }
         }
 
-        if ( getCurrentActivity() != activities::Activity::Jumping )
+        if ( getCurrentActivity() == activities::Activity::DroppingItem || getCurrentActivity() == activities::Activity::DropAndJump )
+                // wait if can’t drop
                 setCurrentActivity( activities::Activity::Waiting );
 }
